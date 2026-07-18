@@ -230,6 +230,39 @@
   }
   .wish-reveal.show{ opacity:1; transform: translateY(0); }
 
+  /* ---------------- hidden letter ---------------- */
+  .letter-section{
+    min-height:100dvh; width:100%; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    padding: 10vh 6vw; text-align:center;
+  }
+  .letter-seal{
+    width:56px; height:56px; border-radius:50%;
+    background: radial-gradient(circle at 35% 30%, #FFB88C, var(--magenta) 70%);
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; color: var(--paper);
+    box-shadow: 0 0 0 6px rgba(255,111,216,.12), 0 10px 30px rgba(255,111,216,.35);
+    margin-bottom:20px;
+    opacity:0; transform: scale(.5) rotate(-15deg);
+    transition: all .7s cubic-bezier(.34,1.56,.64,1);
+  }
+  .letter-seal.show{ opacity:1; transform: scale(1) rotate(0deg); }
+
+  .letter-eyebrow{
+    font-size:11px; letter-spacing:.4em; text-transform:uppercase; color: var(--paper-dim);
+    font-weight:600; margin-bottom:44px;
+  }
+
+  .letter-body{ max-width: 560px; }
+  .letter-line{
+    font-family:'Fraunces', serif; font-style:italic; font-weight:400;
+    font-size: clamp(18px, 3vw, 25px); line-height:1.75; color: var(--paper-dim);
+    margin: 0 0 18px;
+    opacity:0; transform: translateY(18px);
+    transition: opacity .8s ease, transform .8s cubic-bezier(.2,.9,.3,1);
+  }
+  .letter-line.show{ opacity:1; transform: translateY(0); color: var(--paper); }
+  .letter-sign{ margin-top:10px; color: var(--gold) !important; }
+
   /* ---------------- footer / final ---------------- */
   .final{
     min-height:70dvh; display:flex; flex-direction:column; align-items:center; justify-content:center;
@@ -323,9 +356,24 @@
     <p class="wish-reveal" id="wishReveal">Whatever you wished for — I hope it finds its way to you. And if it doesn't, I hope something even better does. 🤍</p>
   </section>
 
+  <section class="letter-section">
+    <div class="letter-seal" id="letterSeal">✉</div>
+    <div class="letter-eyebrow">a note, just for you</div>
+    <div class="letter-body" id="letterBody">
+      <!-- ✍️ EDIT YOUR PERSONAL MESSAGE BELOW — each <p class="letter-line"> fades in one by one as you scroll -->
+      <p class="letter-line">Dear Kuttu,</p>
+      <p class="letter-line">I don't say this enough, so I'm putting it somewhere you can't scroll past.</p>
+      <p class="letter-line">You make ordinary days feel a little lighter, just by being in them.</p>
+      <p class="letter-line">I hope this year gives you everything you've been quietly hoping for —</p>
+      <p class="letter-line">and a few things you didn't even know to wish for.</p>
+      <p class="letter-line">Happy birthday. I'm so glad you exist.</p>
+      <p class="letter-line letter-sign">— always, me</p>
+    </div>
+  </section>
+
   <section class="final">
     <div class="heart">💛</div>
-    <div class="final-note">made just for u</div>
+    <div class="final-note">made for u</div>
   </section>
 </div>
 
@@ -492,6 +540,21 @@
   }
   updateAge();
   setInterval(updateAge, 1000);
+
+  // ================= letter scroll reveal =================
+  const letterObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add('show');
+      }
+    });
+  }, { threshold: 0.4 });
+
+  document.getElementById('letterSeal') && letterObserver.observe(document.getElementById('letterSeal'));
+  document.querySelectorAll('.letter-line').forEach((line, i)=>{
+    line.style.transitionDelay = (i * 0.05) + 's';
+    letterObserver.observe(line);
+  });
 
   // ================= opening gate =================
   const gate = document.getElementById('gate');
